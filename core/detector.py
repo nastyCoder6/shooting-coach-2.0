@@ -1,4 +1,4 @@
-import cv2 as cv
+import cv2
 import mediapipe as mp
 from abc import ABC, abstractmethod
 from mediapipe.tasks.python import vision
@@ -15,8 +15,8 @@ class IPoseDetector(ABC):
 class MediaPipeDetector(IPoseDetector):
     # Definicja połączeń specyficznych dla analizy koszykarskiej
     BASKETBALL_CONNECTIONS = [
-        (12, 14), (14, 16), (16, 20), (16, 22), # Ręka rzucająca
-        (11, 13), (13, 15), (15, 19),           # Ręka pomocnicza
+        (12, 14), (14, 16), (16, 20), (16, 22), # Ręka rzucająca (prawa)
+        (11, 13), (13, 15), (15, 19),           # Ręka pomocnicza (lewa)
         (11, 12), (23, 24), (11, 23), (12, 24), # Tułów i postawa
         (24, 26), (26, 28), (28, 30), (28, 32), # Noga prawa
         (23, 25), (25, 27), (27, 29), (27, 31)  # Noga lewa
@@ -35,7 +35,7 @@ class MediaPipeDetector(IPoseDetector):
 
     def detect_landmarks(self, frame, timestamp_ms: int):
         """Ekstrakcja punktów postaw z klatki (landmarks)."""
-        rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(
             image_format=mp.ImageFormat.SRGB,
             data=rgb_frame
@@ -55,7 +55,7 @@ class MediaPipeDetector(IPoseDetector):
         for lm in landmarks:
             x_px = int(lm.x * w)
             y_px = int(lm.y * h)
-            cv.circle(frame, (x_px, y_px), 3, (255, 0, 0), -1)
+            cv2.circle(frame, (x_px, y_px), 3, (255, 0, 0), -1)
         
         for start_inx, end_idx in self.BASKETBALL_CONNECTIONS:
             start_lm = landmarks[start_inx]
@@ -64,6 +64,6 @@ class MediaPipeDetector(IPoseDetector):
             pt1 = (int(start_lm.x * w), int(start_lm.y * h))
             pt2 = (int(end_lm.x * w), int(end_lm.y * h))
 
-            cv.line(frame, pt1, pt2, (255, 255, 200), 2)
+            cv2.line(frame, pt1, pt2, (255, 255, 200), 2)
 
         return frame

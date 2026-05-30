@@ -1,0 +1,21 @@
+{
+    "EXECUTION": {
+        "elbow": {
+            "min": 140.0,
+            "max": 172.0,
+            "description": "Kąt zgięcia łokcia ręki rzucającej w momencie wypuszczenia piłki."
+        },
+        "knee": {
+            "min": 148.0,
+            "max": 176.0,
+            "description": "Kąt wyprostu kolan decydujący o transferze siły z nóg."
+        }
+    },
+    "PREPARATION": {
+        "knee": {
+            "min": 85.0,
+            "max": 120.0,
+            "description": "Zejście na nogach przed wyjściem w górę."
+        }
+    }
+}

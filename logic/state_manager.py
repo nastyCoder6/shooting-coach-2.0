@@ -1,22 +1,37 @@
 class ShotStateManager:
     """
-    Implementacja Maszyny Stanów (State Machine) dla rzutu koszykarskiego.
-    Fazy: PREPARATION -> EXECUTION -> FOLLOW_THROUGH
+    Maszyna Stanów oparta na analizie wektora pionowego Y nadgarstka.
     """
     def __init__(self):
-        self.current_state = "PREPARATION"
-        self.frame_buffer = []
+        self.current_state = "READY"
         self.release_detected = False
-    
-    def update_state(self, elbow_angle: float, wrist_velocity: float):
-        """
-        Decyduje o zmianie fazy rzutu na podstawie kątów i prędkości.
-        """
-        if self.current_state == "PREPARATION" and elbow_angle < 100:
-            # zawodnik ugina rękę - zaczyna rzut
-            self.current_state = "EXECUTION"
+        self.wrist_y_history = []
+        self.movement_threshold = 0.015 
+
+    def update_state(self, elbow_angle: float, wrist_y: float):
+        self.wrist_y_history.append(wrist_y)
+        
+        if len(self.wrist_y_history) > 5:
+            self.wrist_y_history.pop(0)
             
-        elif self.current_state == "EXECUTION" and elbow_angle > 150:
-            # wyprost ręki - moment wypuszczenia piłki
-            self.current_state = "FOLLOW_THROUGH"
-            self.release_detected = True
+        if len(self.wrist_y_history) < 5:
+            return
+
+        # Różnica wysokości nadgarstka
+        y_diff = self.wrist_y_history[-1] - self.wrist_y_history[0]
+
+        if self.current_state == "READY":
+            # DIP (ruch w dół)
+            if y_diff > self.movement_threshold:
+                self.current_state = "PREPARATION"
+                
+        elif self.current_state == "PREPARATION":
+            # WYRZUT (ruch w górę)
+            if y_diff < -self.movement_threshold:
+                self.current_state = "EXECUTION"
+                
+        elif self.current_state == "EXECUTION":
+            # FOLLOW THROUGH (Twoja ulubiona, działająca reguła 145 stopni)
+            if elbow_angle > 145:
+                self.current_state = "FOLLOW THROUGH"
+                self.release_detected = True
