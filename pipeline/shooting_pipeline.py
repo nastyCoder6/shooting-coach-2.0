@@ -6,7 +6,7 @@ from core.geometry import GeometryEngine
 from logic.profiler import AnthropometricProfiler
 from logic.models import ReferenceModel
 from logic.feedback import FeedbackGenerator
-from logic.state_manager import ShotStateManager  # <--- DODANY IMPORT
+from logic.state_manager import ShotStateManager
 
 class ShootingPipeline:
     def __init__(self, reference_model_path: str):
